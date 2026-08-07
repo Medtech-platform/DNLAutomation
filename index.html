@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1024, initial-scale=1" />
+<title>Competitive Intelligence Engine — Evalueserve</title>
+<style>
+  :root {
+    --bg-primary: #0F0A2E;
+    --bg-secondary: #1A1245;
+    --bg-sidebar: #0C0826;
+    --bg-topbar: #160D3A;
+    --accent: #7B5EF6;
+    --accent-2: #6D4FF6;
+    --accent-deep: #4F3DB0;
+    --active-nav: #2A1F6B;
+    --border: #2D2060;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A89EC9;
+    --text-muted: #5A4E8A;
+    --coral: #F87171;
+    --green: #34D399;
+    --blue: #60A5FA;
+    --amber: #FBBF24;
+    --gray-pill: #6B7280;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+  }
+
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, select { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ===================== TOP BAR ===================== */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    background: var(--bg-topbar);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 100;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 220px;
+    padding-left: 4px;
+  }
+  .brand-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .brand-text { line-height: 1.15; }
+  .brand-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .brand-sub { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+
+  .project-dropdown {
+    position: relative;
+  }
+  .project-dropdown-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .project-dropdown-btn:hover { border-color: var(--accent); background: rgba(123,94,246,0.08); }
+  .project-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 280px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: none;
+    z-index: 200;
+  }
+  .project-dropdown-menu.open { display: block; }
+  .project-dropdown-item {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .project-dropdown-item:hover { background: var(--active-nav); color: #fff; }
+  .project-dropdown-item.active { background: var(--active-nav); color: #fff; }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 420px;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 8px 12px 8px 34px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap svg {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+  }
+
+  .topbar-spacer { flex: 1; }
+
+  .topbar-actions { display: flex; align-items: center; gap: 6px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    transition: background 0.15s, color 0.15s;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: 6px;
+  }
+
+  /* ===================== SIDEBAR ===================== */
+  .sidebar {
+    position: fixed;
+    top: 52px;
+    left: 0;
+    bottom: 0;
+    width: 220px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 12px 0 24px;
+  }
+  .nav-group { margin-top: 4px; }
+  .nav-group-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0 12px;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 36px;
+    padding: 0 12px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .nav-item svg { flex-shrink: 0; }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
+  .nav-item.active {
+    color: #fff;
+    background: var(--active-nav);
+    border-left-color: var(--accent);
+  }
+
+  /* Custom scrollbar */
+  .sidebar::-webkit-scrollbar, .main::-webkit-scrollbar { width: 8px; height: 8px; }
+  .sidebar::-webkit-scrollbar-thumb, .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .sidebar::-webkit-scrollbar-track, .main::-webkit-scrollbar-track { background: transparent; }
+
+  /* ===================== MAIN ===================== */
+  .main {
+    position: fixed;
+    top: 52px;
+    left: 220px;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  /* Dashboard Header Banner */
+  .banner {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .banner-left { display: flex; align-items: center; gap: 16px; }
+  .banner-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: rgba(123,94,246,0.15);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .banner-title { font-size: 20px; font-weight: 600; color: #fff; }
+  .banner-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  .banner-right { display: flex; align-items: center; gap: 14px; }
+  .live-indicator {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--green);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--accent); background: rgba(123,94,246,0.08); }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-2);
+    color: #fff;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--accent); }
+
+  /* Metric cards */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .metric-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .metric-value { font-size: 32px; font-weight: 700; color: #fff; line-height: 1.1; }
+  .metric-value.coral { color: var(--coral); }
+  .metric-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  /* Three panel row */
+  .panels-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .panel {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .panel-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .panel-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 16px; }
+
+  /* Funnel */
+  .funnel-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 50px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 12px;
+  }
+  .funnel-label { color: var(--text-secondary); }
+  .funnel-bar-wrap {
+    height: 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .funnel-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+    border-radius: 4px;
+  }
+  .funnel-bar.green { background: linear-gradient(90deg, var(--green), #10B981); }
+  .funnel-value { color: #fff; font-weight: 600; text-align: right; font-size: 13px; }
+  .funnel-yield {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    font-weight: 500;
+  }
+
+  /* News types */
+  .type-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(45, 32, 96, 0.4);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 22px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+  .pill.blue { background: rgba(96,165,250,0.18); color: var(--blue); border: 1px solid rgba(96,165,250,0.3); }
+  .pill.purple { background: rgba(123,94,246,0.18); color: var(--accent); border: 1px solid rgba(123,94,246,0.3); }
+  .pill.green { background: rgba(52,211,153,0.18); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+  .pill.gray { background: rgba(168,158,201,0.12); color: var(--text-secondary); border: 1px solid rgba(168,158,201,0.25); }
+  .pill.coral { background: rgba(248,113,113,0.18); color: var(--coral); border: 1px solid rgba(248,113,113,0.3); }
+  .pill.amber { background: rgba(251,191,36,0.18); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
+  .type-name { color: #fff; font-weight: 500; }
+  .type-meta { color: var(--text-secondary); font-size: 12px; text-align: right; }
+  .type-meta strong { color: #fff; font-weight: 600; }
+
+  /* Top companies */
+  .company-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(45, 32, 96, 0.4);
+  }
+  .company-row:last-child { border-bottom: none; }
+  .rank-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .company-name { color: #fff; font-size: 13px; font-weight: 500; }
+  .company-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+    width: 100%;
+  }
+  .company-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .company-row .green-badge {
+    background: var(--green);
+    color: #06291f;
+    font-weight: 700;
+  }
+  .company-count {
+    color: var(--text-secondary);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .company-count strong { color: #fff; font-weight: 600; }
+
+  /* Stub page */
+  .stub-page { max-width: 900px; }
+  .stub-title { font-size: 24px; font-weight: 600; color: #fff; }
+  .stub-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 6px; margin-bottom: 24px; }
+  .stub-card {
+    border: 1.5px dashed var(--accent);
+    background: rgba(123,94,246,0.04);
+    border-radius: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  .stub-card svg { color: var(--accent); margin-bottom: 16px; }
+  .stub-card-text { font-size: 14px; color: var(--text-secondary); }
+
+  /* Research setup form */
+  .form-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 560px;
+  }
+  .form-row { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .date-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-field label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .form-field input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    color-scheme: dark;
+  }
+  .form-field input:focus { border-color: var(--accent); }
+
+  /* Full-bleed iframe page (embeds legacy DNL Streamlit app) */
+  .main.bleed { padding: 0 !important; }
+  .legacy-frame {
+    width: 100%;
+    height: calc(100vh - 52px);
+    border: 0;
+    display: block;
+    background: var(--bg-primary);
+  }
+  .legacy-fallback {
+    padding: 32px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 760px;
+  }
+  .legacy-fallback h2 { color: #fff; font-size: 20px; margin-bottom: 10px; }
+  .legacy-fallback code {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #fff;
+  }
+  .legacy-fallback a { color: var(--accent); text-decoration: underline; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 300;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Responsive */
+  @media (max-width: 1280px) {
+    .metrics-row { grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .metric-value { font-size: 26px; }
+  }
+  @media (max-width: 1100px) {
+    .panels-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================ TOP BAR ================ -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon" aria-hidden="true">
+      <!-- abstract grid icon -->
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.2" fill="#fff" opacity="0.95"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.2" fill="#fff" opacity="0.55"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.2" fill="#fff" opacity="0.55"/>
+        <rect x="9" y="9" width="6" height="6" rx="1.2" fill="#fff" opacity="0.95"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-title">Competitive Intelligence Engine</div>
+      <div class="brand-sub">Evalueserve · Powered by AI</div>
+    </div>
+  </div>
+
+  <div class="project-dropdown" id="projectDropdown">
+    <button class="project-dropdown-btn" id="projectDropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 7h18M3 12h18M3 17h12"/>
+      </svg>
+      <span id="projectDropdownLabel">Thermo Fisher — DNL Daily</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+    <div class="project-dropdown-menu" id="projectDropdownMenu" role="listbox"></div>
+  </div>
+
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="7"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" placeholder="Search studies, projects, extractions..." />
+  </div>
+
+  <div class="topbar-spacer"></div>
+
+  <div class="topbar-actions">
+    <button class="icon-btn" title="Notifications" aria-label="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </button>
+    <button class="icon-btn" title="Help" aria-label="Help">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+        <line x1="12" y1="17" x2="12" y2="17"/>
+      </svg>
+    </button>
+    <button class="icon-btn" title="Settings" aria-label="Settings">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+    <div class="avatar" title="JP">JP</div>
+  </div>
+</header>
+
+<!-- ================ SIDEBAR ================ -->
+<aside class="sidebar" id="sidebar"></aside>
+
+<!-- ================ MAIN ================ -->
+<main class="main" id="main"></main>
+
+<!-- ================ TOAST ================ -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   COMPETITIVE INTELLIGENCE ENGINE — Frontend Shell
+   UI-only. Does not affect backend pipeline logic.
+   ============================================================ */
+
+// ---------- ICONS (inline SVG strings) ----------
+const ICONS = {
+  sliders: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
+  search: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  book: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  sparkle: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.39 6.95L21 11l-6.61 2.05L12 20l-2.39-6.95L3 11l6.61-2.05L12 2z"/></svg>`,
+  eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  table: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>`,
+  shield: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6l9-4z"/></svg>`,
+  layers: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+  barchart: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  filetext: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  users: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  clock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  gear: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  download: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+};
+
+// ---------- PROJECTS ----------
+const PROJECTS = [
+  { id: 'tf-daily',    label: 'Thermo Fisher — DNL Daily',    subtitle: 'Daily Newsletter' },
+  { id: 'tf-biweekly', label: 'Thermo Fisher — Biweekly',     subtitle: 'Biweekly Newsletter' },
+  { id: 'tf-quarterly',label: 'Thermo Fisher — Quarterly',    subtitle: 'Quarterly Newsletter' },
+  { id: 'rxbenefits',  label: 'RxBenefits — [placeholder]',   subtitle: '[placeholder]' },
+];
+let currentProjectId = 'tf-daily';
+const getProject = () => PROJECTS.find(p => p.id === currentProjectId);
+
+// ---------- NAVIGATION ----------
+const NAV_GROUPS = [
+  {
+    label: null,
+    items: [
+      { id: 'research-setup',    label: 'Research Setup',     icon: 'sliders' },
+      { id: 'search-strategy',   label: 'Search Strategy',    icon: 'search' },
+      { id: 'literature',        label: 'Literature Repository', icon: 'book' },
+    ],
+  },
+  {
+    label: 'Review & Analysis',
+    items: [
+      { id: 'ai-screening',  label: 'AI Screening',     icon: 'sparkle' },
+      { id: 'fulltext',      label: 'Full Text Review', icon: 'eye' },
+    ],
+  },
+  {
+    label: 'Synthesis',
+    items: [
+      { id: 'data-extraction', label: 'Data Extraction',    icon: 'table' },
+      { id: 'bias-assessment', label: 'Bias Assessment',    icon: 'shield' },
+      { id: 'evidence',        label: 'Evidence Synthesis', icon: 'layers' },
+    ],
+  },
+  {
+    label: 'Analytics',
+    items: [
+      { id: 'analytics', label: 'Analytics Dashboard', icon: 'barchart' },
+    ],
+  },
+  {
+    label: 'Output & Ops',
+    items: [
+      { id: 'reports',       label: 'Report Generator',         icon: 'filetext' },
+      { id: 'collaboration', label: 'Collaboration & Review',   icon: 'users' },
+      { id: 'audit',         label: 'Audit Trail',              icon: 'clock' },
+    ],
+  },
+  {
+    label: 'System',
+    items: [
+      { id: 'admin', label: 'Admin Settings', icon: 'gear' },
+    ],
+  },
+];
+
+let currentPageId = 'analytics';
+
+// Navigating to this URL reloads the SAME Streamlit app (app.py) with a
+// query param that tells it to render the legacy DNL pipeline UI.
+const RESEARCH_SETUP_URL = '?page=research-setup';
+
+// ---------- DATA (HARDCODED PLACEHOLDERS) ----------
+// TODO: replace with live data from DNL pipeline JSON output
+const METRICS = [
+  { value: '2,340', label: 'Records Identified' },
+  { value: '2,028', label: 'After Dedup' },
+  { value: '275',   label: 'Full Text Reviewed' },
+  { value: '40',    label: 'Items Included' },
+  { value: '2,300', label: 'Items Excluded', coral: true },
+];
+
+// TODO: replace with live data from DNL pipeline JSON output
+const FUNNEL = [
+  { label: 'PR Websites Scraped',     value: 45,  pct: 100 },
+  { label: 'Competitors Configured', value: '__COMPETITOR_COUNT__', pct: 100 },
+  { label: 'Products Configured',     value: '__PRODUCT_COUNT__', pct: 100 },
+  { label: 'Raw Items Collected',     value: 312, pct: 78 },
+  { label: 'After Deduplication',     value: 274, pct: 64 },
+  { label: 'After Relevancy Filter',  value: 89,  pct: 42 },
+  { label: 'HOT Items',               value: 12,  pct: 22, hot: true },
+  { label: 'NON-HOT Items',           value: 77,  pct: 36 },
+];
+
+// TODO: replace with live data from DNL pipeline JSON output
+const NEWS_TYPES = [
+  { name: 'Product Launch',        count: 28, pct: 34.2, code: 'PL', color: 'blue' },
+  { name: 'Partnership',           count: 19, pct: 21.3, code: 'PT', color: 'purple' },
+  { name: 'Regulatory Update',     count: 14, pct: 15.7, code: 'RG', color: 'green' },
+  { name: 'Organizational Update', count: 12, pct: 13.5, code: 'OU', color: 'gray' },
+  { name: 'M&A',                   count: 9,  pct: 10.1, code: 'MA', color: 'coral' },
+  { name: 'Conference',            count: 7,  pct: 7.9,  code: 'CF', color: 'amber' },
+];
+
+// TODO: replace with live data from DNL pipeline JSON output
+const TOP_COMPANIES = [
+  { name: 'Siemens Healthineers', items: 18, highlight: true },
+  { name: 'Roche',                items: 14 },
+  { name: 'Abbott',               items: 11 },
+  { name: 'QuidelOrtho',          items: 9  },
+  { name: 'Bio-Rad',              items: 7  },
+  { name: 'Euroimmun',            items: 5  },
+];
+
+// ============================================================
+// RENDERING
+// ============================================================
+
+function renderSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  let html = '';
+  NAV_GROUPS.forEach(group => {
+    html += '<div class="nav-group">';
+    if (group.label) {
+      html += `<div class="nav-group-label">${group.label}</div>`;
+    }
+    group.items.forEach(item => {
+      const active = item.id === currentPageId ? ' active' : '';
+      html += `
+        <div class="nav-item${active}" data-page="${item.id}" role="button" tabindex="0">
+          ${ICONS[item.icon] || ''}
+          <span>${item.label}</span>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  sidebar.innerHTML = html;
+
+  sidebar.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const pageId = el.dataset.page;
+      // Research Setup navigates the TOP window so Streamlit re-runs and
+      // serves the legacy DNL pipeline UI (handled by app.py via ?page=).
+      if (pageId === 'research-setup') {
+        try {
+          window.top.location.href = RESEARCH_SETUP_URL;
+        } catch (e) {
+          window.location.href = RESEARCH_SETUP_URL;
+        }
+        return;
+      }
+      currentPageId = pageId;
+      renderSidebar();
+      renderMain();
+    });
+  });
+}
+
+function todayStr() {
+  return new Date().toLocaleDateString(undefined, {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+}
+
+function yesterdayISO() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function renderAnalyticsDashboard() {
+  const project = getProject();
+  return `
+    <section class="banner">
+      <div class="banner-left">
+        <div class="banner-icon">
+          ${ICONS.barchart.replace('width="16"', 'width="22"').replace('height="16"', 'height="22"')}
+        </div>
+        <div>
+          <div class="banner-title">DNL Analytics Dashboard</div>
+          <div class="banner-subtitle">Thermo Fisher Scientific — ${project.subtitle} | ${todayStr()}</div>
+        </div>
+      </div>
+      <div class="banner-right">
+        <div class="live-indicator">
+          <span class="live-dot"></span>
+          <span>Live Data</span>
+        </div>
+        <button class="btn-outline" id="exportBtn">
+          ${ICONS.download}
+          <span>Export Report</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="metrics-row">
+      ${METRICS.map(m => `
+        <div class="metric-card">
+          <div class="metric-value${m.coral ? ' coral' : ''}">${m.value}</div>
+          <div class="metric-label">${m.label}</div>
+        </div>
+      `).join('')}
+    </section>
+
+    <section class="panels-row">
+      <!-- PANEL 1: Funnel -->
+      <div class="panel">
+        <div class="panel-title">Screening Funnel</div>
+        <div class="panel-subtitle">Flow through DNL pipeline stages</div>
+        ${FUNNEL.map(f => `
+          <div class="funnel-row">
+            <div class="funnel-label">${f.label}</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar${f.hot ? ' green' : ''}" style="width:${f.pct}%"></div>
+            </div>
+            <div class="funnel-value">${f.value}</div>
+          </div>
+        `).join('')}
+        <div class="funnel-yield">PIPELINE YIELD: 3.8% (12 / 312)</div>
+      </div>
+
+      <!-- PANEL 2: News Type Distribution -->
+      <div class="panel">
+        <div class="panel-title">News Type Distribution</div>
+        <div class="panel-subtitle">Breakdown of 89 relevant items by category</div>
+        ${NEWS_TYPES.map(t => `
+          <div class="type-row">
+            <div class="pill ${t.color}">${t.code}</div>
+            <div class="type-name">${t.name}</div>
+            <div class="type-meta"><strong>${t.count}</strong> &middot; ${t.pct}%</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- PANEL 3: Top Companies -->
+      <div class="panel">
+        <div class="panel-title">Top Companies by Coverage</div>
+        <div class="panel-subtitle">Which companies had the most coverage today</div>
+        ${TOP_COMPANIES.map((c, i) => {
+          const max = TOP_COMPANIES[0].items;
+          const w = Math.round((c.items / max) * 100);
+          return `
+            <div class="company-row">
+              <div class="rank-circle${c.highlight ? ' green-badge' : ''}">${i + 1}</div>
+              <div>
+                <div class="company-name">${c.name}</div>
+                <div class="company-bar"><div class="company-bar-fill" style="width:${w}%"></div></div>
+              </div>
+              <div class="company-count"><strong>${c.items}</strong> items</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </section>
+  `;
+}
+
+function renderResearchSetup() {
+  // Clicking "Research Setup" in the sidebar navigates the top window to
+  // ?page=research-setup, which makes app.py render the legacy DNL pipeline
+  // UI (app_legacy.py). This function only runs if that navigation is
+  // delayed or blocked — it shows a manual link as a fallback.
+  return `
+    <div class="stub-page">
+      <div class="stub-title">Loading pipeline interface...</div>
+      <div class="stub-subtitle">If this page does not redirect, click the button below.</div>
+      <div style="margin-top:24px">
+        <a class="btn-primary" href="${RESEARCH_SETUP_URL}" target="_top"
+           style="display:inline-flex;align-items:center;gap:8px;text-decoration:none">
+          <span>Open Research Setup</span>
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function findNavItem(id) {
+  for (const g of NAV_GROUPS) {
+    for (const it of g.items) {
+      if (it.id === id) return it;
+    }
+  }
+  return null;
+}
+
+function renderStub(pageId) {
+  const item = findNavItem(pageId);
+  const project = getProject();
+  const title = item ? item.label : 'Page';
+  const iconKey = item ? item.icon : 'layers';
+  const iconSvg = (ICONS[iconKey] || ICONS.layers)
+    .replace('width="16"', 'width="36"')
+    .replace('height="16"', 'height="36"');
+  return `
+    <div class="stub-page">
+      <div class="stub-title">${title}</div>
+      <div class="stub-subtitle">Thermo Fisher Scientific — ${project.subtitle}</div>
+      <div class="stub-card">
+        ${iconSvg}
+        <div class="stub-card-text">This section is under development. DNL pipeline data will populate here.</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderMain() {
+  const main = document.getElementById('main');
+  // Toggle full-bleed layout when embedding the legacy app via iframe.
+  main.classList.toggle('bleed', currentPageId === 'research-setup');
+
+  if (currentPageId === 'analytics') {
+    main.innerHTML = renderAnalyticsDashboard();
+    const exportBtn = document.getElementById('exportBtn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        alert('Generating report... Please wait.');
+      });
+    }
+  } else if (currentPageId === 'research-setup') {
+    main.innerHTML = renderResearchSetup();
+  } else {
+    main.innerHTML = renderStub(currentPageId);
+  }
+  main.scrollTop = 0;
+}
+
+// ============================================================
+// PROJECT DROPDOWN
+// ============================================================
+function renderProjectDropdown() {
+  const menu = document.getElementById('projectDropdownMenu');
+  menu.innerHTML = PROJECTS.map(p => `
+    <div class="project-dropdown-item${p.id === currentProjectId ? ' active' : ''}" data-id="${p.id}" role="option">
+      ${p.label}
+    </div>
+  `).join('');
+  menu.querySelectorAll('.project-dropdown-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      if (id !== currentProjectId) {
+        currentProjectId = id;
+        const proj = getProject();
+        document.getElementById('projectDropdownLabel').textContent = proj.label;
+        // Active page stays on Analytics Dashboard per spec
+        currentPageId = 'analytics';
+        renderSidebar();
+        renderMain();
+        renderProjectDropdown();
+        showToast(`Switched to: ${proj.label}`);
+      }
+      closeDropdown();
+    });
+  });
+}
+
+function openDropdown() {
+  document.getElementById('projectDropdownMenu').classList.add('open');
+  document.getElementById('projectDropdownBtn').setAttribute('aria-expanded', 'true');
+}
+function closeDropdown() {
+  document.getElementById('projectDropdownMenu').classList.remove('open');
+  document.getElementById('projectDropdownBtn').setAttribute('aria-expanded', 'false');
+}
+function toggleDropdown() {
+  const menu = document.getElementById('projectDropdownMenu');
+  if (menu.classList.contains('open')) closeDropdown(); else openDropdown();
+}
+
+document.getElementById('projectDropdownBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleDropdown();
+});
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('projectDropdown');
+  if (!dd.contains(e.target)) closeDropdown();
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderSidebar();
+renderMain();
+renderProjectDropdown();
+</script>
+</body>
+</html>

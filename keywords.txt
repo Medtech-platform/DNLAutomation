@@ -1,0 +1,141 @@
+# =============================================================
+# DNL Automation Tool — Custom Keywords File
+# =============================================================
+# How this file works:
+#   - Lines starting with # are comments (ignored)
+#   - Blank lines are ignored
+#   - Keywords are grouped under three section headers (lines
+#     containing the words RELEVANT, EXCLUDE, or HOT in the
+#     comment). One keyword per line.
+#   - If this file is missing or a section is empty, the
+#     built-in defaults from main.py are used automatically.
+#
+# IMPORTANT: this file is loaded at startup. After editing,
+# restart the Streamlit app for changes to take effect.
+# =============================================================
+
+
+# ------- SECTION 1: RELEVANT KEYWORDS -----------------------
+# A headline must match AT LEAST ONE of these to pass the
+# keyword filter stage. Case-insensitive substring match.
+# Add or remove terms based on your competitive intelligence scope.
+
+# RELEVANT KEYWORDS — edit below this line
+immunodiagnostic
+allergy diagnostic
+autoimmune diagnostic
+immunoassay
+diagnostic platform
+point-of-care
+poc
+ivd
+elisa
+lateral flow
+multiplex
+serology
+allergy immunotherapy
+allergen immunotherapy
+scit
+slit
+allergy therapeutic
+allergy
+autoimmune
+immunology
+merger
+acquisition
+acquires
+acquired
+takeover
+divest
+partnership
+collaboration
+agreement
+alliance
+joint venture
+product launch
+new product
+launches
+launch
+platform
+ce mark
+ce-mark
+fda clearance
+fda approval
+510(k)
+regulatory approval
+regulatory
+ema approval
+market authorization
+conference
+symposium
+congress
+eaaci
+aaaai
+acaai
+escmid
+diagnostics
+diagnostic
+assay
+reagent
+analyzer
+laboratory
+lab
+clinical
+test kit
+revenue
+earnings
+financial results
+ceo
+cfo
+appoints
+appointment
+leadership
+executive
+
+
+# ------- SECTION 2: EXCLUDE KEYWORDS ------------------------
+# If a headline contains ANY of these, it is immediately
+# rejected regardless of other keyword matches.
+# Use this to cut out off-topic noise.
+
+# EXCLUDE KEYWORDS — edit below this line
+generic drug
+biosimilar
+chemotherapy
+oncology drug
+cardiovascular drug
+diabetes drug
+obesity drug
+mental health
+psychiatry
+neurology drug
+orthopedic
+dermatology drug
+ophthalmology drug
+
+
+# ------- SECTION 3: HOT KEYWORDS ----------------------------
+# If a headline contains ANY of these, it is tagged HOT
+# (highlighted yellow in the Excel export).
+# Use this to flag the most strategically critical news types.
+
+# HOT KEYWORDS — edit below this line
+merger
+acquisition
+acquires
+acquired
+takeover
+divest
+fda approval
+fda clearance
+ce mark
+510(k) clearance
+market authorization
+regulatory approval
+strategic alliance
+joint venture
+major partnership
+platform launch
+breakthrough
+pivotal
+landmark
