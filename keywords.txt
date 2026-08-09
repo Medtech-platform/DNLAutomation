@@ -1,0 +1,116 @@
+# =============================================================
+# DNL Automation — Custom Keywords
+# =============================================================
+# Three sections: RELEVANT, EXCLUDE, HOT
+# One keyword per line. Lines starting with # are ignored.
+# If this file is missing, built-in defaults in run.py are used.
+# Restart / re-run after editing.
+# =============================================================
+
+# RELEVANT KEYWORDS
+immunodiagnostic
+allergy diagnostic
+autoimmune diagnostic
+immunoassay
+diagnostic platform
+point-of-care
+poc
+ivd
+elisa
+lateral flow
+multiplex
+serology
+allergy immunotherapy
+allergen immunotherapy
+scit
+slit
+allergy therapeutic
+allergy
+autoimmune
+immunology
+merger
+acquisition
+acquires
+acquired
+takeover
+divest
+partnership
+collaboration
+agreement
+alliance
+joint venture
+product launch
+new product
+launches
+launch
+platform
+ce mark
+ce-mark
+fda clearance
+fda approval
+510(k)
+regulatory approval
+regulatory
+ema approval
+market authorization
+conference
+symposium
+congress
+eaaci
+aaaai
+acaai
+escmid
+diagnostics
+diagnostic
+assay
+reagent
+analyzer
+laboratory
+lab
+clinical
+test kit
+revenue
+earnings
+financial results
+ceo
+cfo
+appoints
+appointment
+leadership
+executive
+
+# EXCLUDE KEYWORDS
+generic drug
+biosimilar
+chemotherapy
+oncology drug
+cardiovascular drug
+diabetes drug
+obesity drug
+mental health
+psychiatry
+neurology drug
+orthopedic
+dermatology drug
+ophthalmology drug
+
+# HOT KEYWORDS
+merger
+acquisition
+acquires
+acquired
+takeover
+divest
+fda approval
+fda clearance
+ce mark
+510(k) clearance
+market authorization
+regulatory approval
+strategic alliance
+joint venture
+major partnership
+platform launch
+breakthrough
+pivotal
+landmark

@@ -1,0 +1,17 @@
+# Secrets — NEVER commit this
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Runtime output (generated fresh each run — don't commit)
+output/
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
