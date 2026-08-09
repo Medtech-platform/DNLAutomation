@@ -1,0 +1,162 @@
+name: DNL — Daily Newsletter Scan
+
+on:
+  # ── Scheduled runs ─────────────────────────────────────────────────────────
+  # Runs Monday–Friday at 06:00 UTC (adjust to your timezone below).
+  # Cron format:  minute  hour  day  month  weekday
+  # Examples:
+  #   '0 6 * * 1-5'   → 06:00 UTC Mon–Fri
+  #   '0 4 * * 1-5'   → 04:00 UTC Mon–Fri  (= 09:30 IST)
+  #   '0 7 * * 1-5'   → 07:00 UTC Mon–Fri  (= 12:30 IST)
+  schedule:
+    - cron: '0 6 * * 1-5'
+
+  # ── Manual trigger with inputs ─────────────────────────────────────────────
+  # Go to: Actions → DNL — Daily Newsletter Scan → Run workflow
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date (YYYY-MM-DD). Leave blank = 3 days ago.'
+        required: false
+        default: ''
+      end_date:
+        description: 'End date (YYYY-MM-DD). Leave blank = today.'
+        required: false
+        default: ''
+      days:
+        description: 'Lookback days (used only when start_date is blank).'
+        required: false
+        default: '3'
+      use_ai:
+        description: 'Run AI relevancy filter? (true / false)'
+        required: false
+        default: 'true'
+      use_google:
+        description: 'Run Google News scan? (true / false)'
+        required: false
+        default: 'true'
+      use_pr:
+        description: 'Scrape PR websites? (true / false)'
+        required: false
+        default: 'true'
+      use_products:
+        description: 'Run product screening? (true / false)'
+        required: false
+        default: 'true'
+
+jobs:
+  scan:
+    name: Run DNL scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 60        # safety cap — most runs finish in 15–25 min
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Python setup ──────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ── 3. Syntax check ──────────────────────────────────────────────────
+      - name: Syntax check
+        run: python -m py_compile run.py && echo "✅ run.py OK"
+
+      # ── 4. Build CLI arguments ───────────────────────────────────────────
+      # Works for both scheduled runs (all inputs are empty/default)
+      # and manual runs (inputs are set by the user).
+      - name: Build run arguments
+        id: args
+        run: |
+          ARGS=""
+
+          # Date range
+          START="${{ github.event.inputs.start_date }}"
+          END="${{ github.event.inputs.end_date }}"
+          DAYS="${{ github.event.inputs.days }}"
+          DAYS="${DAYS:-3}"   # default 3 if blank
+
+          if [ -n "$START" ]; then
+            ARGS="$ARGS --start $START"
+          else
+            ARGS="$ARGS --days $DAYS"
+          fi
+
+          if [ -n "$END" ]; then
+            ARGS="$ARGS --end $END"
+          fi
+
+          # Feature flags (default true on scheduled run)
+          USE_AI="${{ github.event.inputs.use_ai }}"
+          USE_AI="${USE_AI:-true}"
+          USE_GOOGLE="${{ github.event.inputs.use_google }}"
+          USE_GOOGLE="${USE_GOOGLE:-true}"
+          USE_PR="${{ github.event.inputs.use_pr }}"
+          USE_PR="${USE_PR:-true}"
+          USE_PRODUCTS="${{ github.event.inputs.use_products }}"
+          USE_PRODUCTS="${USE_PRODUCTS:-true}"
+
+          [ "$USE_AI"       = "false" ] && ARGS="$ARGS --no-ai"
+          [ "$USE_GOOGLE"   = "false" ] && ARGS="$ARGS --no-google"
+          [ "$USE_PR"       = "false" ] && ARGS="$ARGS --no-pr"
+          [ "$USE_PRODUCTS" = "false" ] && ARGS="$ARGS --no-products"
+
+          echo "args=$ARGS" >> "$GITHUB_OUTPUT"
+          echo "Built CLI args: $ARGS"
+
+      # ── 5. Run the scanner ───────────────────────────────────────────────
+      - name: Run DNL pipeline
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL:   ${{ secrets.GROQ_MODEL }}   # optional — leave secret blank to use default
+        run: |
+          python run.py ${{ steps.args.outputs.args }}
+
+      # ── 6. Upload Excel report as artifact ───────────────────────────────
+      # The Excel file stays in GitHub for 30 days (configurable below).
+      # Download it from:  Actions → this run → Artifacts section (bottom of page)
+      - name: Upload Excel report
+        if: always()   # upload even if the run had partial failures
+        uses: actions/upload-artifact@v4
+        with:
+          name: DNL-Report-${{ github.run_number }}
+          path: |
+            output/*.xlsx
+            output/*.csv
+            output/run_summary.md
+          retention-days: 30
+          if-no-files-found: warn
+
+      # ── 7. Upload log file ───────────────────────────────────────────────
+      - name: Upload run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DNL-Log-${{ github.run_number }}
+          path: logs/*.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # ── 8. Write summary to Actions job page ────────────────────────────
+      # The run_summary.md is also written to GITHUB_STEP_SUMMARY inside
+      # run.py, so the Actions job page shows a formatted table automatically.
+      - name: Post summary
+        if: always()
+        run: |
+          if [ -f output/run_summary.md ]; then
+            cat output/run_summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "⚠️ run_summary.md not found — pipeline may have failed early." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # ── 9. Notify on failure (optional — uses GitHub's built-in email) ──
+      # GitHub automatically emails the repo owner when a scheduled workflow
+      # fails. No extra step needed. If you want Slack / Teams notifications,
+      # add a step here using the relevant action from the marketplace.
