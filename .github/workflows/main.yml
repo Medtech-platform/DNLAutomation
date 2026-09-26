@@ -160,3 +160,27 @@ jobs:
       # GitHub automatically emails the repo owner when a scheduled workflow
       # fails. No extra step needed. If you want Slack / Teams notifications,
       # add a step here using the relevant action from the marketplace.
+      
+      # ── 10. Email Excel report to Abhishek ──────────────────────────────
+      - name: Send Excel report via email
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          secure: false
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "DNL Report – ${{ github.run_number }} | ${{ github.run_id }}"
+          to: Abhishek.Sanyal@evalueserve.com
+          from: apoorvachhabra.collab@gmail.com
+          body: |
+            Hi Abhishek,
+
+            Please find attached the Daily Newsletter Scan report for today.
+
+            This is an automated email. Report generated on run #${{ github.run_number }}.
+
+            Regards,
+            Apoorva
+          attachments: output/*.xlsx
