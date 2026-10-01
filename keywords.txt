@@ -7,68 +7,106 @@
 # Restart / re-run after editing.
 # =============================================================
 
+# ─────────────────────────────────────────────────────────────
 # RELEVANT KEYWORDS
-immunodiagnostic
-allergy diagnostic
-autoimmune diagnostic
-immunoassay
-diagnostic platform
-point-of-care
-poc
-ivd
-elisa
-lateral flow
-multiplex
-serology
-allergy immunotherapy
-allergen immunotherapy
-scit
-slit
-allergy therapeutic
-allergy
+# Covers: categories, news types, diseases, products, companies
+# ─────────────────────────────────────────────────────────────
+
+# ── Core Business Categories ──
+autoimmunity diagnostics
+allergy diagnostics
+allergy therapeutics
 autoimmune
-immunology
-merger
-acquisition
-acquires
-acquired
-takeover
-divest
-partnership
-collaboration
-agreement
-alliance
-joint venture
+autoimmunity
+allergy
+immunodiagnostics
+immunoassay
+companion diagnostic
+immunodiagnostic
+
+# ── News Event Types ──
+scientific publication
+therapeutic news
+test and kit
+reagents
+kits
+tests
+assays
+biomarker
+biomarkers
+instruments
+analyzer
+analyzers
+software
+digital initiative
+artificial intelligence
+machine learning
+deep learning
+
+# ── Product Event Verbs ──
 product launch
+product news
 new product
-launches
 launch
-platform
-ce mark
-ce-mark
+launches
+releases
+unveils
+introduces
+
+# ── M&A / Corporate ──
+merger
+mergers
+acquisition
+acquisitions
+acquire
+acquires
+divestiture
+divest
+sell off
+spin off
+portfolio realignment
+partnership
+partnerships
+joint venture
+join forces
+collaboration
+collaborates
+jointly
+co-produce
+agreement
+partner
+team up
+
+# ── Regulatory ──
+regulatory approval
+regulatory news
+fda
 fda clearance
 fda approval
+ce mark
+ce-mark
+ce ivdr
+ivdr
+pmda
+nmpa
+510k clearance
 510(k)
-regulatory approval
-regulatory
 ema approval
 market authorization
-conference
-symposium
-congress
-eaaci
-aaaai
-acaai
-escmid
-diagnostics
-diagnostic
-assay
-reagent
-analyzer
-laboratory
-lab
-clinical
-test kit
+
+# ── Financial / Organizational ──
+annual report
+quarterly report
+funding
+investment round
+rebranding
+rebrand
+structural changes
+executive changes
+c-suite
+board of directors
+regional head
+leadership changes
 revenue
 earnings
 financial results
@@ -78,8 +116,288 @@ appoints
 appointment
 leadership
 executive
+director
 
+# ── Conferences / Events ──
+conference
+congress
+event participation
+eaaci
+aaaai
+acaai
+escmid
+symposium
+expo
+
+# ── Diagnostics Technology Terms ──
+immunodiagnostic
+diagnostic platform
+point-of-care
+point of care testing
+poc
+ivd
+elisa
+lateral flow
+multiplex
+serology
+immunofluorescence
+immunoblot
+chemiluminescence
+eclia
+clia
+lia
+fecal calprotectin
+bead based epitope assay
+basophil activation test
+mast cell activation test
+
+# ── Allergy Therapeutics ──
+allergy immunotherapy
+allergen immunotherapy
+oral immunotherapy
+sublingual immunotherapy
+subcutaneous immunotherapy
+epicutaneous immunotherapy
+pollen allergen immunotherapy
+scit
+slit
+allergy therapeutic drugs
+
+# ── Autoimmune Diseases ──
+antiphospholipid syndrome
+autoimmune hepatitis
+autoimmune liver disease
+autoimmune thyroid
+celiac disease
+coeliac disease
+connective tissue disease
+crohns disease
+diabetes type 1
+type 1 diabetes
+t1d
+glutamic acid decarboxylase antibody
+gad antibody
+graves disease
+interstitial lung disease
+juvenile idiopathic arthritis
+latent autoimmune diabetes in adults
+lada
+liver cirrhosis
+primary biliary cholangitis
+primary biliary cirrhosis
+rheumatoid arthritis
+sjogren syndrome
+systemic juvenile idiopathic arthritis
+systemic lupus erythematosus
+sle
+vasculitis
+systemic sclerosis
+systemic autoimmune disease
+autoimmune rheumatic disease
+autoimmune bullous disease
+inflammatory bowel disease
+ibd
+multiple sclerosis
+hashimoto disease
+goodpasture syndrome
+wegener granulomatosis
+churg strauss syndrome
+mixed connective tissue disease
+mctd
+dermatomyositis
+polymyositis
+autoimmune encephalitis
+
+# ── Allergy Conditions ──
+allergic rhinitis
+food allergy
+house dust mites
+inhalant allergens
+milk allergy
+aeroallergens
+nasal allergen
+atopic dermatitis
+respiratory allergy
+pollen allergy
+ocular allergy
+venom allergy
+penicillin allergy
+anaphylaxis
+allergic conjunctivitis
+drug allergy
+
+# ── Key Competitor Companies ──
+a menarini diagnostics
+menarini
+abbott
+ac immune
+aesku diagnostics
+aesku group
+aimmune therapeutics
+alcor scientific
+alerje
+aliveDx
+alk
+alladapt immunotherapeutics
+allegra
+allergenis
+allergy amulet
+allergy partners
+allergy therapeutics
+allermi
+allersmart
+allervie health
+aravax
+asit biotech
+atanis biotech
+augurex life sciences
+autobio diagnostics
+axim biotechnologies
+bayer healthcare
+bbi solutions
+bd biosciences
+beckman coulter
+bio-rad
+biosynex
+bio-techne
+buhlmann
+c2n diagnostics
+camallergy
+canon medical systems
+cellavision
+celltrion
+cerascreen
+danaher
+dbv technologies
+desentum
+diasorin
+dots technology
+dr fooke
+euroimmun
+eurospital
+exagen
+fujirebio
+gentian diagnostics
+gold standard diagnostics
+grifols
+hob biotech
+hycor
+iason
+iggenix
+imcyse
+inova diagnostics
+intrommune therapeutics
+jsr life sciences
+lg chem
+macro array diagnostics
+madx
+mannkind
+mbl
+medicalystem biotechnology
+meso scale diagnostics
+mikrogen
+mindray
+neogen
+octave bioscience
+omega diagnostics
+oncimmune
+orgentec
+ortho clinical diagnostics
+pepperprint
+perspectum
+precisionlife
+progentec diagnostics
+prolight diagnostics
+prometheus laboratories
+quidel
+quidelortho
+quotient
+r-biopharm
+reacta biotech
+resonac
+revvity
+perkinelmer
+roche diagnostics
+sebia
+siemens healthineers
+snibe diagnostics
+stallergenes greer
+sugentech
+svar lifesciences
+theradiag
+trinity biotech
+werfen
+wondfo
+wuxidiagnostics
+yhlo
+zeus scientific
+euroimmun
+buhlmann laboratories
+
+# ── Key Product Names ──
+zenit
+chorus
+alinity
+architect
+aeskulisa
+aesqc
+helios
+aklides
+atlas
+mosaiq
+lumiq
+autolumo
+bioplex
+kallestad
+evolis
+platelia
+cast elisa
+flow cast
+quantum blue
+fCAL turbo
+ibdoc
+liaison
+xmap
+luminex
+verigene
+allerg-o-liq
+allerg-o-system
+alfa reader
+allerg-o-win
+euroline
+euroblotone
+europattern
+ids isys
+elecsys
+cobas
+alegria
+orgentec
+immulite
+atellica
+advia centaur
+maglumi
+noveos
+hytec
+advanSure
+alex allergy xplorer
+fox food xplorer
+mesacup
+meblux
+microvue
+thyretain
+vitros
+theranostics
+iflash
+istar
+quanta
+bio flash
+aptiva
+lisa tracker
+
+# ─────────────────────────────────────────────────────────────
 # EXCLUDE KEYWORDS
+# These flag articles as NOT relevant even if other keywords match
+# ─────────────────────────────────────────────────────────────
 generic drug
 biosimilar
 chemotherapy
@@ -93,8 +411,18 @@ neurology drug
 orthopedic
 dermatology drug
 ophthalmology drug
+urology
+gastroenterology drug
+pain management
+antidepressant
+antipsychotic
+gene therapy unrelated
+cell therapy unrelated
 
+# ─────────────────────────────────────────────────────────────
 # HOT KEYWORDS
+# Articles matching these get flagged as HOT priority
+# ─────────────────────────────────────────────────────────────
 merger
 acquisition
 acquires
@@ -114,3 +442,13 @@ platform launch
 breakthrough
 pivotal
 landmark
+ce ivdr
+nmpa
+pmda
+510k
+product launch
+new product
+rebranding
+spin off
+portfolio realignment
+investment round
